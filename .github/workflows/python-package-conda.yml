@@ -1,0 +1,35 @@
+name: Run Org Extractor Test from Github actions
+
+on: [push]
+#on:
+  #workflow_dispatch:
+
+jobs:
+  build-linux:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        #os: [windows-latest, ubuntu-latest, macos-latest]
+        os: [ubuntu-latest,macos-latest]
+        
+    steps:
+    - name: Checking out repo
+      uses: actions/checkout@v2
+    - name: Setting up Python
+      uses: actions/setup-python@v2
+      with:
+          python-version: '3.9'
+    - name: Add conda to system path
+      run: |
+        # $CONDA is an environment variable pointing to the root of the miniconda directory
+        echo $CONDA/bin >> $GITHUB_PATH
+    - name: Install dependencies
+      run: |
+        conda install selenium
+        conda install requests
+    - name: Installing all necessary packages
+      run: pip install chromedriver-autoinstaller selenium pyvirtualdisplay
+        
+    - name: Test with unittest
+      run: |
+        python -m unittest
